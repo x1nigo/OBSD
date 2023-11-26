@@ -10,6 +10,6 @@
 ,xdotool,"bind commands to keypresses"
 ,xwallpaper,"sets the wallpaper"
 ,rofi,"an application launcher aside from dmenu"
-,firefox,"a browser by Mozilla"
+,chromium,"a web browser from Google that is not Chrome"
 G,https://github.com/x1nigo/dotfiles.git,"my configuration files"
 G,https://github.com/x1nigo/bsdfiles.git,"my bsd specific files"

@@ -11,6 +11,7 @@
 
 # Things to note:
 # - Run this script as ROOT!
+# TODO: Under construction...
 
 error() {
 	# Log to stderr and exit with failure.
@@ -38,8 +39,8 @@ preinstallmsg() {
 }
 
 adduserandpass() {
-	useradd -m -g wheel "$name" ||
-		usermod -G wheel "$name" && mkdir -p /home/"$name" && chown "$name":wheel /home/"$name"
+	useradd -m "$name"
+	usermod -G wheel "$name"
 	export repodir="/home/$name/.local/src"
 	mkdir -p "$repodir"
 	chown -R "$name":wheel "$(dirname "$repodir")"
@@ -54,6 +55,33 @@ finalize() {
 ### The Main Install ###
 
 installpkgs() {
+	[ ! -f ~/obsd/progs.csv ] && { curl -Ls "$progsfile" | sed '/^#/d' > /tmp/progs.csv } || { cat ~/obsd/progs.csv | sed '/^#/d' > /tmp/progs.csv }
+	while IFS=, read -r tag program description
+	do
+		case $tag in
+			G) doas "$name" git -C "$repodir" clone "$program" ;;
+			*) pkg_add "$program" ;;
+		esac
+	done < /tmp/progs.csv
+}
+
+setupbsd() {
+	# Configure multimedia
+	echo "kern.audio.record=1" >> /etc/sysctl.conf
+	echo "kern.video.record=1" >> /etc/sysctl.conf
+
+	# Configure tapping and natural scrolling
+	echo "mouse.tp.tapping=1" >> /etc/wsconsctl.conf
+	echo "mouse.reverse_scrolling=1" >> /etc/wsconsctl.conf
+}
+
+setdoas() {
+	echo "permit persist keepenv :wheel
+permit nopass :wheel cmd halt args -p
+permit nopass :wheel cmd reboot
+permit nopass :wheel cmd make args install
+permit nopass :wheel cmd make args clean install
+permit nopass :wheel cmd su" > /etc/doas.conf
 }
 
 ### The Main Functions ###

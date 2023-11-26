@@ -2,6 +2,8 @@
 
 This is my post-install script for OpenBSD.
 
+*Still under construction...*
+
 ## How to use:
 
 ```

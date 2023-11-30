@@ -13,6 +13,10 @@
 # - Run this script as ROOT!
 # TODO: Under construction...
 
+# Variables
+progsfile="https://raw.githubusercontent.com/x1nigo/OBSD/main/progs.csv"
+dotfilesrepo="https://github.com/x1nigo/dotfiles.git"
+
 error() {
 	# Log to stderr and exit with failure.
 	printf "%s\n" "$1" >&2
@@ -65,6 +69,9 @@ installpkgs() {
 	done < /tmp/progs.csv
 }
 
+getdotfiles() {
+}
+
 setupbsd() {
 	# Configure multimedia
 	echo "kern.audio.record=1" >> /etc/sysctl.conf
@@ -97,3 +104,15 @@ preinstallmsg || error "Preinstall message unsuccessful."
 
 # Add the user and their password.
 adduserandpass || error "Failed to add user and password to system."
+
+# Install the packages
+installpkgs || error "Failed to install packages."
+
+# Get dotfiles and configure such.
+getdotfiles || error "Failed to install configuration files."
+
+# Setup the working environment
+setupbsd || error "Failed to setup the working environment."
+
+# Configure doas permissions
+setdoas || error "Failed to configure doas permissions."
